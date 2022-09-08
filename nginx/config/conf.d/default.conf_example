@@ -1,0 +1,188 @@
+server {
+    # listen       80;
+    listen       443 ssl;
+    server_name  apidc-go.act.id;
+    ssl_certificate /etc/nginx/ssl/bundle.crt;
+    ssl_certificate_key /etc/nginx/ssl/act-id.key;
+    client_max_body_size 10M;
+
+    access_log  /var/log/nginx/apidc.access.log  responsetime;
+    error_log  /var/log/nginx/apidc.error.log  error;
+
+    location / {
+        resolver 127.0.0.11;
+        #set $backend http://apidc:8000;
+        proxy_pass http://apidc:8000;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+    }
+
+    location /qurban_implementasi/ {
+        resolver 127.0.0.11;
+        #set $backend http://distribusi_qurban:8080/;
+        proxy_pass http://distribusi_qurban:8080/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/distribusi_qurban.access.log  responsetime;
+        error_log  /var/log/nginx/distribusi_qurban.error.log  error;
+    }
+
+    location /autopay/ {
+        resolver 127.0.0.11;
+        #set $backend http://autopay:8000;
+        proxy_pass http://autopay:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/autopay.access.log  responsetime;
+        error_log  /var/log/nginx/autopay.error.log  error;
+    }
+
+    location /gipmobile/ {
+        resolver 127.0.0.11;
+        #set $backend http://gip_mobile:8000/;
+        proxy_pass http://gip_mobile:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/gipmobile.access.log  postdata;
+        error_log  /var/log/nginx/gipmobile.error.log  error;
+    }
+
+    location /pendamping/ {
+        resolver 127.0.0.11;
+        #set $backend http://pendamping:8000/;
+        proxy_pass http://pendamping:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/pendamping.access.log  postdata;
+        error_log  /var/log/nginx/pendamping.error.log  error;
+    }
+
+    location /gipmitra/qrcode/validate {
+        resolver 127.0.0.11;
+        #set $backend http://gip_mobile:8000/;
+        proxy_pass http://gip_mobile:8000/qrcode/validate;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/gipmobile.access.log  postdata;
+        error_log  /var/log/nginx/gipmobile.error.log  error;
+        #access_log  /var/log/nginx/gipmitra.access.log  postdata;
+        #error_log  /var/log/nginx/gipmitra.error.log  error;
+    }
+
+    location /gipmitra/ {
+        resolver 127.0.0.11;
+        #set $backend http://gip_mitra:8000/;
+        proxy_pass http://gip_mitra:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/gipmitra.access.log  postdata;
+        error_log  /var/log/nginx/gipmitra.error.log  error;
+    }
+
+    location /admin-gipmitra/ {
+        resolver 127.0.0.11;
+        #set $backend http://admin_gip_mitra:8000/;
+        proxy_pass http://admin_gip_mitra:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/admingipmitra.access.log  postdata;
+        error_log  /var/log/nginx/admingipmitra.error.log  error;
+    }
+
+    location /assessment-ghr/ {
+        resolver 127.0.0.11;
+        #set $backend http://admin_gip_mitra:8000/;
+        proxy_pass http://assessment_ghr:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/assessmentghr.access.log  postdata;
+        error_log  /var/log/nginx/assessmentghr.error.log  error;
+    }
+
+    location /humanitymedicalcareline/ {
+        resolver 127.0.0.11;
+        #set $backend http://admin_gip_mitra:8000/;
+        proxy_pass http://humanitymedicalcareline:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/humanitymedicalcareline.access.log  postdata;
+        error_log  /var/log/nginx/humanitymedicalcareline.error.log  error;
+    }
+
+    location /gip_gq_implementator/ {
+        resolver 127.0.0.11;
+        #set $backend http://admin_gip_mitra:8000/;
+        proxy_pass http://gip_gq_implementator:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/gip_gq_implementator.access.log  postdata;
+        error_log  /var/log/nginx/gip_gq_implementator.error.log  error;
+    }
+
+    location /gis-api/ {
+        resolver 127.0.0.11;
+        #set $backend http://gis-api:8000/;
+        proxy_pass http://gis-api:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/gis-api.access.log  postdata;
+        error_log  /var/log/nginx/gis-api.error.log  error;
+    }
+
+    location /fundraising-api/ {
+        resolver 127.0.0.11;
+        #set $backend http://akuntansi-api:8000/;
+        proxy_pass http://fundraising-api:8000/;
+        proxy_set_header  Host              $http_host;   # required for docker client's sake
+        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Proto $scheme;
+        access_log  /var/log/nginx/fundraising-api.access.log  postdata;
+        error_log  /var/log/nginx/fundraising-api.error.log  error;
+    }
+
+#    location /gip_gq_implementator/ {
+#        resolver 127.0.0.11;
+        #set $backend http://admin_gip_mitra:8000/;
+#        proxy_pass http://humanitybiker:8000/;
+#        proxy_set_header  Host              $http_host;   # required for docker client's sake
+#        proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+#        proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+#        proxy_set_header  X-Forwarded-Proto $scheme;
+#        access_log  /var/log/nginx/humanitybiker.access.log  postdata;
+#        error_log  /var/log/nginx/humanitybiker.error.log  error;
+#    }
+ 
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

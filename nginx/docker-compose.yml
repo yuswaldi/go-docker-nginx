@@ -1,0 +1,13 @@
+version: "2.4"
+services:
+  nginx:
+    build: 
+      context: .
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf # need this to fix nginx 'caching' bugs
+      - ./config/conf.d:/etc/nginx/conf.d
+      - ./config/ssl:/etc/nginx/ssl
+      - ./log/nginx:/var/log/nginx
+    ports: 
+      - "443:443"
+    restart: always
