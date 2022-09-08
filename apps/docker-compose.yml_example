@@ -1,0 +1,13 @@
+version: "2.4"
+networks:
+  default:
+    external:
+      name: "nginx_default"
+services:
+  gis-api:
+    image: 465732654097.dkr.ecr.ap-southeast-1.amazonaws.com/gip_app/gis-api-go:prod
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Jakarta
+    volumes:
+      - ./config/gis-api.toml:/etc/gis-api/config.production.toml
