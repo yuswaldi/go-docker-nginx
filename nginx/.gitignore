@@ -1,1 +1,2 @@
 log/nginx/*
+nginx/config/conf.d/*.conf
