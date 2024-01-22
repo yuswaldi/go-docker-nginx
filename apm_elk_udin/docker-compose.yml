@@ -1,0 +1,80 @@
+version: '2.4'
+services:
+#  prometheus:
+#    image: prom/prometheus
+#    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana:/var/lib/grafana
+#    ports:
+#      - "30000:3000"
+  influxdb:
+    image: influxdb:1.8.10
+#    command: influxdb -config /etc/influxdb/influxdb.conf
+    restart: unless-stopped
+    volumes:
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - ./influxdb:/var/lib/influxdb
+    ports:
+      - "8086:8086"
+  telegraf:
+    image: telegraf
+    command: telegraf --config /etc/telegraf/telegraf.conf --config-directory /etc/telegraf/telegraf.d
+    restart: unless-stopped
+    volumes:
+      - ./telegraf:/etc/telegraf:ro
+      - ./telegraf/telegraf:/usr/bin/telegraf
+      - ./nginx-log:/var/log/nginx:ro
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    restart: unless-stopped
+    environment:
+      - xpack.security.enabled=false
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./es-data:/usr/share/elasticsearch/data
+      - ./es-snapshot:/usr/share/elasticsearch/snapshot
+      - ./elasticsearch/es01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: http://elasticsearch:9200/
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ulimits:
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+#    ports:
+#      - "5601:5601"
+    depends_on:
+      - elasticsearch
+  nginx:
+    image: nginx:stable
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf # need this to fix nginx 'caching' bugs
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx-log:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
