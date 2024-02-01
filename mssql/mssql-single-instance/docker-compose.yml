@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  identity-database:
+    build:
+      context: .
+      args:
+        - INSTALL_TOOLS=${INSTALL_TOOLS}
+    ports:
+      - "1433:1433"
+    env_file:
+      - sqlserver.env
+      - sapassword.env
+    volumes:
+      - ./app/sqlsystem:/var/opt/mssql/
+      - ./app/sqldata:/var/opt/sqlserver/data
+      - ./app/sqllog:/var/opt/sqlserver/log
+      - ./app/sqlbackup:/var/opt/sqlserver/backup
+volumes:
+  sqlsystem:
+  sqldata:
+  sqllog:
+  sqlbackup:
